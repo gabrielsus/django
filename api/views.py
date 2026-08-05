@@ -1,9 +1,10 @@
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse, FileResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .utils import generar_pdf_en_memoria
+from .models import Comprobantes, Tareas
 @csrf_exempt
 def vista(request):
     if request.method == 'GET':
@@ -37,3 +38,8 @@ class DescargarReportePDFView(APIView):
                 )
             except Exception as e:
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
+##orm
+def listar_tareas_view(request):
+    # Consultamos todos los registros de la tabla tareas con el ORM
+    datos = list(Tareas.objects.filter(titulo__icontains="OSDE").values())
+    return JsonResponse(datos, safe=False)
