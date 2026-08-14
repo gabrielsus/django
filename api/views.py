@@ -66,6 +66,25 @@ def cantidad_administradores_por_banco(request):
     # Consultamos todos los registros de la tabla administradores_consorcio con el ORM
     datos = list(AdministradoresConsorcio.objects.values('banco_codigo__nombre').annotate(cantidad=models.Count('id')).order_by('-cantidad'))
     return JsonResponse(datos, safe=False)
+########obtengo mediante orm un administrador por matricula
+def obtener_administrador_por_matricula(request, matricula):
+    try:
+        admin = AdministradoresConsorcio.objects.select_related('banco_codigo').get(matricula=matricula)
+        datos = {
+            "id": admin.id,
+            "matricula": admin.matricula,
+            "nombre": admin.nombre,
+            "fecha_inscripcion": admin.fecha_inscripcion,
+            "oneroso": admin.oneroso,
+            "correo": admin.correo,
+            "sanciones": admin.sanciones,
+            "banco_id": admin.banco_codigo_id,
+            "nombre_banco": admin.banco_codigo.nombre if admin.banco_codigo else None
+        }
+        return JsonResponse(datos, safe=False)
+    except AdministradoresConsorcio.DoesNotExist:
+        return JsonResponse({"error": "Administrador no encontrado"}, status=404)
+
 #####hago un update de adminsitrador por id
 @csrf_exempt
 def actualizar_administrador(request, admin_id):
