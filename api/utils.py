@@ -2,8 +2,11 @@ from google import genai
 import re
 import os
 import io
+import matplotlib
+matplotlib.use('Agg')  # Usar un backend sin GUI para generar gráficos en memoria
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+import traceback
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak
 from reportlab.lib.styles import getSampleStyleSheet
@@ -35,10 +38,16 @@ def generarReporte(data):
       " sección y evitar bloques de texto largos."
   )
 
-  response = client.models.generate_content(
+
+  try:
+      response = client.models.generate_content(
       model="gemini-3.5-flash-lite",  # Ajustado al modelo estándar actual de la SDK
       contents=prompt,
   )
+  except Exception as e:
+    print(f"Error al generar el reporte: {e}")
+    traceback.print_exc()
+    return "Error al generar el reporte."
   return response.text
 ####PLOTEO DE DATAFRAME
 def generar_plot_en_memoria(data, ticker_symbol):
