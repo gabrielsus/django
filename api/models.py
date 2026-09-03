@@ -50,3 +50,15 @@ class Tareas(models.Model):
     class Meta:
         managed = True
         db_table = 'tareas'
+
+
+class Productos(models.Model):
+    description = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    image = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'productos'
+
+

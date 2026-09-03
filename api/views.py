@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .utils import generar_pdf_en_memoria
-from .models import Comprobantes, Tareas,AdministradoresConsorcio, Bancos
+from .models import Comprobantes, Tareas,AdministradoresConsorcio, Bancos,Productos
 from django.db import transaction,models
 from django.db.models import F
 import json
@@ -84,6 +84,12 @@ def obtener_administrador_por_matricula(request, matricula):
         return JsonResponse(datos, safe=False)
     except AdministradoresConsorcio.DoesNotExist:
         return JsonResponse({"error": "Administrador no encontrado"}, status=404)
+
+########obtengo todos los productos mediante orm
+def obtener_productos(request):
+    productos = Productos.objects.all()
+    datos = list(productos.values())
+    return JsonResponse(datos, safe=False)
 
 #####hago un update de adminsitrador por id
 @csrf_exempt
