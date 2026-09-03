@@ -88,16 +88,21 @@ WSGI_APPLICATION = 'endpoint.wsgi.application'
 # }
 
 # Y ponés esto en su lugar:
-tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+import os
+from urllib.parse import urlparse, parse_qsl
 
+raw_url = os.getenv("DATABASE_URL")
+tmpPostgres = urlparse(raw_url)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': tmpPostgres.path.replace('/', ''),
+        # Forzamos directamente 'neondb' para evitar que urlparse arrastre basura
+        'NAME': 'neondb', 
         'USER': tmpPostgres.username,
         'PASSWORD': tmpPostgres.password,
         'HOST': tmpPostgres.hostname,
-        'PORT': 5432,
+        'PORT': tmpPostgres.port or 5432,
+        'CONN_MAX_AGE': 600,
         'OPTIONS': dict(parse_qsl(tmpPostgres.query)),
     }
 }

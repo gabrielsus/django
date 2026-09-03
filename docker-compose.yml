@@ -30,7 +30,7 @@ services:
   celery_worker:
     build: .
     container_name: celery_worker
-    command: celery -A tu_proyecto worker --loglevel=info
+    command: celery -A endpoint worker --loglevel=info
     volumes:
       - .:/app
     environment:
